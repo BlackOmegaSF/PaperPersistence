@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="PaperPersistencePlugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/PaperPersistencePlugin</output-path>
+    <root id="archive" name="PaperPersistencePlugin.jar">
+      <element id="module-output" name="PaperPersistence" />
+    </root>
+  </artifact>
+</component>
