@@ -117,7 +117,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerDeath(final PlayerDeathEvent event) {
-        final Player player = (Player) event.getEntity();
+        final Player player = event.getEntity();
 
         final ItemStack[] inventory = player.getInventory().getContents();
 
