@@ -57,35 +57,33 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 		*/
 
         // Check if KeepInventory is enabled, recommend disabling it
-        getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            public void run() {
-                List<String> keepInventoryWorlds = new ArrayList<>();
-                for (World world : getServer().getWorlds()) {
-                    Boolean keepInventoryEnabled = world.getGameRuleValue(GameRule.KEEP_INVENTORY);
-                    if (keepInventoryEnabled != null && keepInventoryEnabled) {
-                        keepInventoryWorlds.add(world.getName());
-                    }
+        getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+            List<String> keepInventoryWorlds = new ArrayList<>();
+            for (World world : getServer().getWorlds()) {
+                Boolean keepInventoryEnabled = world.getGameRuleValue(GameRule.KEEP_INVENTORY);
+                if (keepInventoryEnabled != null && keepInventoryEnabled) {
+                    keepInventoryWorlds.add(world.getName());
                 }
+            }
 
-                if (keepInventoryWorlds.size() == 0) {
-                    getLogger().log(Level.INFO, "KeepInventory is disabled, Persistence will work correctly.");
-                } else if (keepInventoryWorlds.size() == 1) {
-                    final TextComponent message = Component.text("KeepInventory is enabled in world \"")
-                            .color(NamedTextColor.YELLOW)
-                            .append(Component.text(keepInventoryWorlds.get(0), NamedTextColor.BLUE))
-                            .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
-                    getServer().broadcast(message, "OP");
-                } else {
-                    final TextComponent message = Component.text("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.")
-                            .color(NamedTextColor.YELLOW);
-                    getServer().broadcast(message, "OP");
-                    StringBuilder listString = new StringBuilder();
-                    for (String world : keepInventoryWorlds) {
-                        listString.append(world);
-                        listString.append("; ");
-                    }
-                    getLogger().log(Level.INFO, listString.toString());
+            if (keepInventoryWorlds.size() == 0) {
+                getLogger().log(Level.INFO, "KeepInventory is disabled, Persistence will work correctly.");
+            } else if (keepInventoryWorlds.size() == 1) {
+                final TextComponent message = Component.text("KeepInventory is enabled in world \"")
+                        .color(NamedTextColor.YELLOW)
+                        .append(Component.text(keepInventoryWorlds.get(0), NamedTextColor.BLUE))
+                        .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
+                getServer().broadcast(message, "OP");
+            } else {
+                final TextComponent message = Component.text("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.")
+                        .color(NamedTextColor.YELLOW);
+                getServer().broadcast(message, "OP");
+                StringBuilder listString = new StringBuilder();
+                for (String world : keepInventoryWorlds) {
+                    listString.append(world);
+                    listString.append("; ");
                 }
+                getLogger().log(Level.INFO, listString.toString());
             }
         });
 
