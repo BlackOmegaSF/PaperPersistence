@@ -1,7 +1,7 @@
 name: PaperPersistence
-version: 1.0
+version: 1.1.1
 main: com.floogoobooq.blackomega.paperpersistence.PaperPersistence
-api-version: 1.15
+api-version: 1.18
 commands:
   makepersistent:
     description: Uses a Reinforced Emerald to make an item Persistent.
