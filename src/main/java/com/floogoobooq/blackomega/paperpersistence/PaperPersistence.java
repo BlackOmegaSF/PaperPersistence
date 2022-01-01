@@ -1,28 +1,28 @@
 package com.floogoobooq.blackomega.paperpersistence;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-//import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-//import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-// import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.logging.Level;
+
+//import org.bukkit.event.block.BlockPlaceEvent;
+//import org.bukkit.inventory.Inventory;
+// import org.bukkit.inventory.ShapedRecipe;
 
 //import de.tr7zw.nbtapi.NBTCompound;
 //import de.tr7zw.nbtinjector.NBTInjector;
