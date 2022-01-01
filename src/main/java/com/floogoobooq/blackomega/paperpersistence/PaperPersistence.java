@@ -90,10 +90,10 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         // Create the Reinforced Emerald
         ItemStack reinforcedEmerald = new ItemStack(Material.EMERALD);
         ItemMeta reMeta = reinforcedEmerald.getItemMeta();
-        reMeta.setDisplayName("Reinforced Emerald");
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("Persistent");
-        reMeta.setLore(lore);
+        reMeta.displayName(Component.text("Reinforced Emerald"));
+        List<Component> lore = new ArrayList<>();
+        lore.add(Component.text("Persistent"));
+        reMeta.lore(lore);
         reinforcedEmerald.setItemMeta(reMeta);
 
         // Set up shapeless crafting recipe for Reinforced Emerald
@@ -134,9 +134,16 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                         for (ItemStack s : shulker.getInventory().getContents()) {
                             if(s != null ) {
                                 if (s.getItemMeta().hasLore()) {
-                                    List<String> lore = s.getItemMeta().getLore();
+                                    List<Component> lore = s.getItemMeta().lore();
                                     assert lore != null;
-                                    if (!lore.contains("Persistent")) {
+                                    // Check each lore component
+                                    boolean containsPersistence = false;
+                                    for (Component component: lore) {
+                                        if (component.examinableName().equals("Persistent")) {
+                                            containsPersistence = true;
+                                        }
+                                    }
+                                    if (containsPersistence) {
                                         player.getWorld().dropItemNaturally(player.getLocation(), s);
                                         s.setAmount(0);
                                     } else {
@@ -175,9 +182,16 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
 
                 if (is.getItemMeta().hasLore()) {
-                    List<String> lore = is.getItemMeta().getLore();
+                    List<Component> lore = is.getItemMeta().lore();
                     assert lore != null;
-                    if (!lore.contains("Persistent")) {
+                    // Check each lore component
+                    boolean containsPersistence = false;
+                    for (Component component: lore) {
+                        if (component.examinableName().equals("Persistent")) {
+                            containsPersistence = true;
+                        }
+                    }
+                    if (containsPersistence) {
                         inventory[i] = null;
                     } else {
                         event.getDrops().remove(is);
@@ -265,17 +279,25 @@ public class PaperPersistence extends JavaPlugin implements Listener {
             for (ItemStack item : isCollection) {
                 ItemMeta meta = item.getItemMeta();
                 if (meta.hasLore()) {
-                    List<String> lore = item.getItemMeta().getLore();
+                    List<Component> lore = item.getItemMeta().lore();
                     assert lore != null;
-                    if (!lore.contains("Persistent")) {
-                        lore.add("Persistent");
-                        meta.setLore(lore);
+                    // Check each lore component
+                    boolean containsPersistence = false;
+                    for (Component component: lore) {
+                        if (component.examinableName().equals("Persistent")) {
+                            containsPersistence = true;
+                        }
+                    }
+                    if (containsPersistence) {
+                        Component persistenceText = Component.text("Persistent");
+                        lore.add(persistenceText);
+                        meta.lore(lore);
                     }
 
                 } else {
-                    ArrayList<String> lore = new ArrayList<>();
-                    lore.add("Persistent");
-                    meta.setLore(lore);
+                    ArrayList<Component> lore = new ArrayList<>();
+                    lore.add(Component.text("Persistent"));
+                    meta.lore(lore);
                 }
 
                 item.setItemMeta(meta);
