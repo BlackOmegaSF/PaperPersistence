@@ -268,7 +268,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         Block blockBroken = event.getBlock();
         if(Tag.SHULKER_BOXES.isTagged(blockBroken.getType())) {
             Collection<ItemStack> isCollection = blockBroken.getDrops();
-            Collection<ItemStack> newCollection = new ArrayList<ItemStack>();
+            Collection<ItemStack> newCollection = new ArrayList<>();
             for (ItemStack item : isCollection) {
                 ItemMeta meta = item.getItemMeta();
                 if (meta.hasLore()) {
