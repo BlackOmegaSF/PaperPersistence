@@ -53,7 +53,7 @@ public class CommandMakePersistent implements CommandExecutor {
                                 if (lore.contains("Persistent")) {
                                     sender.sendMessage("This item is already persistent.");
                                     error = true;
-                                    break outerloop;
+                                    break;
                                 }
                                 // lore.add("Persistent"); //Not used because it's bypassed with the above error
                                 // ohItemMeta.setLore(lore);
@@ -84,7 +84,7 @@ public class CommandMakePersistent implements CommandExecutor {
                                 player.getWorld().dropItemNaturally(player.getLocation(), bigEmerald);
                             }
 
-                            break outerloop;
+                            break;
 
 
                         }
