@@ -127,6 +127,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                             if(s != null ) {
                                 if (s.getItemMeta().hasLore()) {
                                     List<String> lore = s.getItemMeta().getLore();
+                                    assert lore != null;
                                     if (!lore.contains("Persistent")) {
                                         player.getWorld().dropItemNaturally(player.getLocation(), s);
                                         s.setAmount(0);
@@ -167,6 +168,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
                 if (is.getItemMeta().hasLore()) {
                     List<String> lore = is.getItemMeta().getLore();
+                    assert lore != null;
                     if (!lore.contains("Persistent")) {
                         inventory[i] = null;
                     } else {
@@ -252,12 +254,12 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         if(Tag.SHULKER_BOXES.isTagged(blockBroken.getType())) {
             Collection<ItemStack> isCollection = blockBroken.getDrops();
             Collection<ItemStack> newCollection = new ArrayList<ItemStack>();
-            for(Iterator<ItemStack> iterator = isCollection.iterator(); iterator.hasNext();) {
-                ItemStack item = iterator.next();
+            for (ItemStack item : isCollection) {
                 ItemMeta meta = item.getItemMeta();
-                if(meta.hasLore()) {
+                if (meta.hasLore()) {
                     List<String> lore = item.getItemMeta().getLore();
-                    if(!lore.contains("Persistent")) {
+                    assert lore != null;
+                    if (!lore.contains("Persistent")) {
                         lore.add("Persistent");
                         meta.setLore(lore);
                     }
@@ -273,8 +275,8 @@ public class PaperPersistence extends JavaPlugin implements Listener {
             }
 
             blockBroken.setType(Material.AIR);
-            for (Iterator<ItemStack> newIterator = newCollection.iterator(); newIterator.hasNext();) {
-                blockBroken.getWorld().dropItemNaturally(blockBroken.getLocation(), newIterator.next());
+            for (ItemStack itemStack : newCollection) {
+                blockBroken.getWorld().dropItemNaturally(blockBroken.getLocation(), itemStack);
             }
         }
     }
