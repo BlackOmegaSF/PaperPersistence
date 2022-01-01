@@ -55,7 +55,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         // Check if KeepInventory is enabled, recommend disabling it
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
             public void run() {
-                List<String> keepInventoryWorlds = new ArrayList<String>();
+                List<String> keepInventoryWorlds = new ArrayList<>();
                 for (World world : getServer().getWorlds()) {
                     Boolean keepInventoryEnabled = world.getGameRuleValue(GameRule.KEEP_INVENTORY);
                     if (keepInventoryEnabled != null && keepInventoryEnabled) {
