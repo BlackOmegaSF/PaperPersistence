@@ -1,5 +1,8 @@
 package com.floogoobooq.blackomega.paperpersistence;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.Buildable;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -14,6 +17,7 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import net.kyori.adventure.text.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,9 +70,15 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                 if (keepInventoryWorlds.size() == 0) {
                     getLogger().log(Level.INFO, "KeepInventory is disabled, Persistence will work correctly.");
                 } else if (keepInventoryWorlds.size() == 1) {
-                    Bukkit.broadcastMessage("KeepInventory is enabled in world \"" + keepInventoryWorlds.get(0) + "\". For the Persistence plugin to work properly, this should be disabled.");
+                    final TextComponent message = Component.text("KeepInventory is enabled in world \"")
+                            .color(NamedTextColor.YELLOW)
+                            .append(Component.text(keepInventoryWorlds.get(0), NamedTextColor.BLUE))
+                            .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
+                    getServer().broadcast(message, "OP");
                 } else {
-                    Bukkit.broadcastMessage("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.");
+                    final TextComponent message = Component.text("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.")
+                            .color(NamedTextColor.YELLOW);
+                    getServer().broadcast(message, "OP");
                     StringBuilder listString = new StringBuilder();
                     for (String world : keepInventoryWorlds) {
                         listString.append(world);
