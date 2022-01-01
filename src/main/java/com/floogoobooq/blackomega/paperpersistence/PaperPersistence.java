@@ -202,14 +202,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
             }
         }
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-
-            @Override
-            public void run() {
-                player.getInventory().setContents(inventory);
-            }
-
-        });
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.getInventory().setContents(inventory));
 
     }
 
