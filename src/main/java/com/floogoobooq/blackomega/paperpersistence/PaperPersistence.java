@@ -23,37 +23,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-//import org.bukkit.event.block.BlockPlaceEvent;
-//import org.bukkit.inventory.Inventory;
-// import org.bukkit.inventory.ShapedRecipe;
-
-//import de.tr7zw.nbtapi.NBTCompound;
-//import de.tr7zw.nbtinjector.NBTInjector;
-
 public class PaperPersistence extends JavaPlugin implements Listener {
 
 
     public void onEnable() {
 
         getServer().getPluginManager().registerEvents(this, this);
-
-        //registerPersistence();
-        //NamespacedKey id = new NamespacedKey(this, "PERSISTENCE");
-        //Persistence persistence = new Persistence(id);
-		/*
-		// Create the Oops Potato
-		ItemStack oopsPotato = new ItemStack(Material.POISONOUS_POTATO);
-		ItemMeta potatoMeta = oopsPotato.getItemMeta();
-		potatoMeta.setDisplayName("oops");
-		oopsPotato.setItemMeta(potatoMeta);
-
-		NamespacedKey recipeKey = new NamespacedKey(this, "persistenceRecipe");
-		ShapedRecipe persistenceRecipe = new ShapedRecipe(recipeKey, oopsPotato);
-
-		persistenceRecipe.shape("###", "#o#", "###");
-		persistenceRecipe.setIngredient('#', Material.EMERALD);
-		persistenceRecipe.setIngredient('o',  )
-		*/
 
         // Check if KeepInventory is enabled, recommend disabling it
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
@@ -158,24 +133,6 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                         im.setBlockState(shulker);
                         is.setItemMeta(im);
 
-						/*ItemStack[] shulkerInv = shulker.getInventory().getContents();
-						for(int s = 0; s < shulkerInv.length; i++) {
-							ItemStack ss = shulkerInv[s];
-							if(ss != null) {
-								if (ss.getItemMeta().hasLore()) {
-									List<String> lore = ss.getItemMeta().getLore();
-									if (!lore.contains("Persistent")) {
-										shulkerInv[s] = null;
-									} else {
-										event.getDrops().remove(ss);
-									}
-								} else {
-									shulkerInv[s] = null;
-								}
-							}
-						}
-						*/
-
                     }
                 }
 
@@ -204,63 +161,6 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.getInventory().setContents(inventory));
 
     }
-
-	/*@EventHandler
-	public void onBlockPlace(final BlockPlaceEvent event) {
-
-		//Player player = event.getPlayer();
-		//EquipmentSlot playerHand = event.getHand();  //Will use this if offhand causes issues
-
-		ItemStack placedItem = event.getItemInHand();
-		if(placedItem.getItemMeta().hasLore()) {
-			List<String> itemLore = placedItem.getItemMeta().getLore();
-			if(itemLore.contains("Persistent")) {
-				Block placedBlock = event.getBlockPlaced();
-				NBTCompound comp = NBTInjector.getNbtData(placedBlock.getState());
-				comp.setString("Persistent", "yes");
-			}
-		}
-
-
-	}*/
-
-	/*@EventHandler
-	public void onBlockBreak(final BlockBreakEvent event) {
-		Block blockBroken = event.getBlock();
-		NBTCompound comp = NBTInjector.getNbtData(blockBroken.getState());
-		if(comp.hasKey("Persistent") != null) {
-			if(comp.hasKey("Persistent")) {
-				String persistent = comp.getString("Persistent");
-				if(persistent.equals("yes")) {
-					Collection<ItemStack> isCollection = blockBroken.getDrops();
-					Collection<ItemStack> newCollection = new ArrayList<ItemStack>();
-					for (Iterator<ItemStack> iterator = isCollection.iterator(); iterator.hasNext();) {
-						ItemStack item = iterator.next();
-						if(item.getItemMeta().hasLore()) {
-							List<String> lore = item.getItemMeta().getLore();
-							if(!lore.contains("Persistent")) {
-								lore.add("Persistent");
-								item.getItemMeta().setLore(lore);
-							}
-
-						}
-						newCollection.add(item);
-					}
-
-					blockBroken.setType(Material.AIR);
-					for (Iterator<ItemStack> newIterator = newCollection.iterator(); newIterator.hasNext();) {
-						blockBroken.getWorld().dropItemNaturally(blockBroken.getLocation(), newIterator.next());
-					}
-
-
-				}
-			}
-		}
-
-
-
-
-	}*/
 
     @EventHandler
     public void onBlockBreak(final BlockBreakEvent event) {
