@@ -1,6 +1,7 @@
 package com.floogoobooq.blackomega.paperpersistence;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -46,8 +47,9 @@ public class CommandMakePersistent implements CommandExecutor {
             ItemStack is = inventory[i];
             if (is != null) { // Skip if null to avoid NullPointerException
                 if (is.getType() ==  Material.EMERALD && is.getItemMeta().hasDisplayName() && is.getItemMeta().hasLore()) {
-                    if (Objects.requireNonNull(is.getItemMeta().lore()).get(0).examinableName().equals("Persistent")
-                            && Objects.requireNonNull(is.getItemMeta().displayName()).examinableName().equals("Reinforced Emerald")) {
+                    String itemLore = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().lore()).get(0));
+                    String itemDisplayName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().displayName()));
+                    if (itemLore.equals("Persistent") && itemDisplayName.equals("Reinforced Emerald")) {
 
                         //Grab data of target item
                         ItemStack targetItem;
