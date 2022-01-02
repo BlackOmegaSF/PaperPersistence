@@ -117,7 +117,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                                             containsPersistence = true;
                                         }
                                     }
-                                    if (containsPersistence) {
+                                    if (!containsPersistence) {
                                         player.getWorld().dropItemNaturally(player.getLocation(), s);
                                         s.setAmount(0);
                                     } else {
@@ -147,7 +147,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                             containsPersistence = true;
                         }
                     }
-                    if (containsPersistence) {
+                    if (!containsPersistence) {
                         inventory[i] = null;
                     } else {
                         event.getDrops().remove(is);
@@ -180,7 +180,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                             containsPersistence = true;
                         }
                     }
-                    if (containsPersistence) {
+                    if (!containsPersistence) {
                         Component persistenceText = Component.text("Persistent");
                         lore.add(persistenceText);
                         meta.lore(lore);
