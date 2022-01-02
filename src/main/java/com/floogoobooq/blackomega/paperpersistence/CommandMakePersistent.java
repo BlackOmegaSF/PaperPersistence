@@ -11,108 +11,132 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommandMakePersistent implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            ItemStack[] inventory = player.getInventory().getContents();
-
-            boolean error = false;
-            for (int i = 0; i < inventory.length; i++) {
-                ItemStack is = inventory[i];
-                if (is != null) { // Skip if null to avoid NullPointerException
-                    if (is.getType() ==  Material.EMERALD && is.getItemMeta().hasDisplayName() && is.getItemMeta().hasLore()) {
-                        if (Objects.requireNonNull(is.getItemMeta().lore()).get(0).examinableName().equals("Persistent")
-                                && Objects.requireNonNull(is.getItemMeta().displayName()).examinableName().equals("Reinforced Emerald")) {
-
-                            //Grab data of OffHand item
-                            ItemStack ohItem = player.getInventory().getItemInOffHand();
-                            ItemStack bigStack = ohItem.clone();
-                            ItemStack bigEmerald = is.clone();
-                            boolean giveBig = false;
-
-                            if (ohItem.getAmount() > 1) {
-                                bigStack.setAmount((ohItem.getAmount() - 1));
-                                ohItem.setAmount(1);
-                                giveBig = true;
-                            }
-
-                            //Add Persistence to OffHand item
-                            ItemMeta ohItemMeta = ohItem.getItemMeta();
-
-                            if (ohItemMeta == null) {
-                                sender.sendMessage("Nothing in offhand to enchant");
-                                error = true;
-                                break;
-                            }
-
-                            if (ohItemMeta.hasLore()) {
-                                List<Component> lore = ohItemMeta.lore();
-                                // Check each lore component
-                                boolean containsPersistence = false;
-                                assert lore != null;
-                                for (Component component: lore) {
-                                    if (component.examinableName().equals("Persistent")) {
-                                        containsPersistence = true;
-                                    }
-                                }
-                                if (containsPersistence) {
-                                    sender.sendMessage("This item is already persistent.");
-                                    error = true;
-                                    break;
-                                }
-
-                            } else {
-                                ArrayList<Component> lore = new ArrayList<>();
-                                lore.add(Component.text("Persistent"));
-                                ohItemMeta.lore(lore);
-                            }
-
-                            ohItem.setItemMeta(ohItemMeta);
-
-                            player.getInventory().setItemInOffHand(ohItem);
-                            sender.sendMessage("Enchanted!");
-                            error = true; //Using error as a flag to stop the Emerald not found message
-                            if (giveBig) {
-                                player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
-                            }
-                            //Take away the Reinforced Emerald
-                            player.getInventory().setItem(i,  new ItemStack(Material.AIR));
-                            boolean giveBigEmerald = false;
-
-                            if (is.getAmount() > 1) {
-                                bigEmerald.setAmount((is.getAmount() - 1));
-                                giveBigEmerald = true;
-                            }
-
-                            if (giveBigEmerald) {
-                                player.getWorld().dropItemNaturally(player.getLocation(), bigEmerald);
-                            }
-
-                            break;
-
-
-                        }
-
-                    }
-                }
-            }
-
-            if (!error) {
-                sender.sendMessage("No Reinforced Emerald found, could not enchant.");
-            }
-            return true;
-
-        } else {
-            sender.sendMessage("Only players should use this command");
+        //Check args length
+        if (args.length < 2) {
+            sender.sendMessage("Missing arguments");
             return false;
         }
 
+        Player player = sender.getServer().getPlayerExact(args[0]);
+        if (player == null) {
+            sender.sendMessage("Player not found");
+            return false;
+        }
+
+        boolean mainHand;
+        if (args[1].equalsIgnoreCase("main")) {
+            mainHand = true;
+        } else if (args[1].equalsIgnoreCase("offhand")) {
+            mainHand = false;
+        } else {
+            sender.sendMessage("Invalid hand parameter: must be main or offhand");
+            return false;
+        }
+
+        ItemStack[] inventory = player.getInventory().getContents();
+
+        for (int i = 0; i < inventory.length; i++) {
+            ItemStack is = inventory[i];
+            if (is != null) { // Skip if null to avoid NullPointerException
+                if (is.getType() ==  Material.EMERALD && is.getItemMeta().hasDisplayName() && is.getItemMeta().hasLore()) {
+                    if (Objects.requireNonNull(is.getItemMeta().lore()).get(0).examinableName().equals("Persistent")
+                            && Objects.requireNonNull(is.getItemMeta().displayName()).examinableName().equals("Reinforced Emerald")) {
+
+                        //Grab data of target item
+                        ItemStack targetItem = null;
+                        if (mainHand) {
+                            targetItem = player.getInventory().getItemInMainHand();
+                        } else {
+                            targetItem = player.getInventory().getItemInOffHand();
+                        }
+                        ItemStack bigStack = targetItem.clone();
+                        ItemStack bigEmerald = is.clone();
+                        boolean giveBig = false;
+
+                        if (targetItem.getAmount() > 1) {
+                            bigStack.setAmount((targetItem.getAmount() - 1));
+                            targetItem.setAmount(1);
+                            giveBig = true;
+                        }
+
+                        //Add Persistence to OffHand item
+                        ItemMeta targetItemMeta = targetItem.getItemMeta();
+                        String handString;
+                        if (mainHand) {
+                            handString = "main hand";
+                        } else {
+                            handString = "offhand";
+                        }
+                        if (targetItemMeta == null) {
+                            sender.sendMessage("Nothing in " + handString + " to enchant");
+                            return true;
+                        }
+
+                        if (targetItemMeta.hasLore()) {
+                            List<Component> lore = targetItemMeta.lore();
+                            // Check each lore component
+                            boolean containsPersistence = false;
+                            assert lore != null;
+                            for (Component component: lore) {
+                                if (component.examinableName().equals("Persistent")) {
+                                    containsPersistence = true;
+                                }
+                            }
+                            if (containsPersistence) {
+                                sender.sendMessage("This item is already persistent.");
+                                return true;
+                            }
+
+                        } else {
+                            ArrayList<Component> lore = new ArrayList<>();
+                            lore.add(Component.text("Persistent"));
+                            targetItemMeta.lore(lore);
+                        }
+
+                        targetItem.setItemMeta(targetItemMeta);
+
+                        if (mainHand) {
+                            player.getInventory().setItemInMainHand(targetItem);
+                        } else {
+                            player.getInventory().setItemInOffHand(targetItem);
+                        }
+                        sender.sendMessage("Enchanted!");
+                        if (giveBig) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
+                        }
+                        //Take away the Reinforced Emerald
+                        player.getInventory().setItem(i,  new ItemStack(Material.AIR));
+                        boolean giveBigEmerald = false;
+
+                        if (is.getAmount() > 1) {
+                            bigEmerald.setAmount((is.getAmount() - 1));
+                            giveBigEmerald = true;
+                        }
+
+                        if (giveBigEmerald) {
+                            player.getWorld().dropItemNaturally(player.getLocation(), bigEmerald);
+                        }
+
+                        return true;
 
 
+                    }
+
+                }
+            }
+        }
+
+        //This only happens if no emerald is found, other cases return before this
+        sender.sendMessage("No Reinforced Emerald found, could not enchant.");
+
+        return true;
     }
 
 }
+
