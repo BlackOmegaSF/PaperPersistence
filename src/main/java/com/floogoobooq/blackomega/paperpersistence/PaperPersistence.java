@@ -3,6 +3,8 @@ package com.floogoobooq.blackomega.paperpersistence;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.md_5.bungee.chat.TextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
@@ -48,7 +50,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                         .append(Component.text(keepInventoryWorlds.get(0), NamedTextColor.BLUE))
                         .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
                 getServer().broadcast(message, "OP");
-                getLogger().log(Level.WARNING, "KeepInventory is enabled in world \"" + keepInventoryWorlds.get(0) + "\". For the Persistence plugin to work properly, this should be disabled.");
+                getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(message));
             } else {
                 final TextComponent message = Component.text("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.")
                         .color(NamedTextColor.YELLOW);
@@ -58,7 +60,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                     listString.append(world);
                     listString.append("; ");
                 }
-                getLogger().log(Level.WARNING, "KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.");
+                getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(message));
                 getLogger().log(Level.INFO, listString.toString());
             }
         });
@@ -115,7 +117,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                                     // Check each lore component
                                     boolean containsPersistence = false;
                                     for (Component component: lore) {
-                                        if (component.examinableName().equals("Persistent")) {
+                                        if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
                                             containsPersistence = true;
                                         }
                                     }
@@ -145,7 +147,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                     // Check each lore component
                     boolean containsPersistence = false;
                     for (Component component: lore) {
-                        if (component.examinableName().equals("Persistent")) {
+                        if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
                             containsPersistence = true;
                         }
                     }
@@ -178,7 +180,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                     // Check each lore component
                     boolean containsPersistence = false;
                     for (Component component: lore) {
-                        if (component.examinableName().equals("Persistent")) {
+                        if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
                             containsPersistence = true;
                         }
                     }
