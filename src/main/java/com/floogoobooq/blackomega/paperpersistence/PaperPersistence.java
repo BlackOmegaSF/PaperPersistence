@@ -82,7 +82,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
         // Register the command
         this.getCommand("makepersistent").setExecutor(new CommandMakePersistent());
-
+        this.getCommand("makepersistent").setTabCompleter(new TabCompletion());
 
     }
 
