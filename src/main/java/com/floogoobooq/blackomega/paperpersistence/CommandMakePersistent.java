@@ -64,8 +64,7 @@ public class CommandMakePersistent implements CommandExecutor {
                                     error = true;
                                     break;
                                 }
-                                // lore.add("Persistent"); //Not used because it's bypassed with the above error
-                                // ohItemMeta.setLore(lore);
+
                             } else {
                                 ArrayList<Component> lore = new ArrayList<>();
                                 lore.add(Component.text("Persistent"));
