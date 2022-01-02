@@ -58,6 +58,10 @@ public class CommandMakePersistent implements CommandExecutor {
                         } else {
                             targetItem = player.getInventory().getItemInOffHand();
                         }
+                        if (is.equals(targetItem)) { //Special case for trying to enchant a reinforced emerald
+                            sender.sendMessage("This item is already persistent.");
+                            return true;
+                        }
                         ItemStack bigStack = targetItem.clone();
                         ItemStack bigEmerald = is.clone();
                         boolean giveBig = false;
