@@ -50,7 +50,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             && Objects.requireNonNull(is.getItemMeta().displayName()).examinableName().equals("Reinforced Emerald")) {
 
                         //Grab data of target item
-                        ItemStack targetItem = null;
+                        ItemStack targetItem;
                         if (mainHand) {
                             targetItem = player.getInventory().getItemInMainHand();
                         } else {
