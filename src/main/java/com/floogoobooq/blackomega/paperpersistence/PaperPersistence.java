@@ -48,7 +48,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                         .append(Component.text(keepInventoryWorlds.get(0), NamedTextColor.BLUE))
                         .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
                 getServer().broadcast(message, "OP");
-                getLogger().log(Level.WARNING, message.toString());
+                getLogger().log(Level.WARNING, "KeepInventory is enabled in world \"" + keepInventoryWorlds.get(0) + "\". For the Persistence plugin to work properly, this should be disabled.");
             } else {
                 final TextComponent message = Component.text("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.")
                         .color(NamedTextColor.YELLOW);
@@ -58,7 +58,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                     listString.append(world);
                     listString.append("; ");
                 }
-                getLogger().log(Level.WARNING, message.toString());
+                getLogger().log(Level.WARNING, "KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.");
                 getLogger().log(Level.INFO, listString.toString());
             }
         });
