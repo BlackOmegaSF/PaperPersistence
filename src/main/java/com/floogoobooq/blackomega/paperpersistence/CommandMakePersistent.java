@@ -87,7 +87,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             boolean containsPersistence = false;
                             assert lore != null;
                             for (Component component: lore) {
-                                if (component.examinableName().equals("Persistent")) {
+                                if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
                                     containsPersistence = true;
                                 }
                             }
