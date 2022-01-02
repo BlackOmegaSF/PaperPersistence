@@ -21,7 +21,6 @@ public class CommandMakePersistent implements CommandExecutor {
             ItemStack[] inventory = player.getInventory().getContents();
 
             boolean error = false;
-            outerloop: // Label to break out to
             for (int i = 0; i < inventory.length; i++) {
                 ItemStack is = inventory[i];
                 if (is != null) { // Skip if null to avoid NullPointerException
@@ -47,7 +46,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             if (ohItemMeta == null) {
                                 sender.sendMessage("Nothing in offhand to enchant");
                                 error = true;
-                                break outerloop;
+                                break;
                             }
 
                             if (ohItemMeta.hasLore()) {
