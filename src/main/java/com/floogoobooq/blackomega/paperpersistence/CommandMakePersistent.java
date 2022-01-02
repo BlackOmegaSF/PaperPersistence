@@ -1,17 +1,18 @@
 package com.floogoobooq.blackomega.paperpersistence;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class CommandMakePersistent implements CommandExecutor {
 
