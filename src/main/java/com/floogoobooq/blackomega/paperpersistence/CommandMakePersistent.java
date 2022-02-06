@@ -64,7 +64,6 @@ public class CommandMakePersistent implements CommandExecutor {
                             return true;
                         }
                         ItemStack bigStack = targetItem.clone();
-                        ItemStack bigEmerald = is.clone();
                         boolean giveBig = false;
 
                         if (targetItem.getAmount() > 1) {
@@ -135,17 +134,13 @@ public class CommandMakePersistent implements CommandExecutor {
                         if (giveBig) {
                             player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
                         }
-                        //Take away the Reinforced Emerald
-                        player.getInventory().setItem(i,  new ItemStack(Material.AIR));
-                        boolean giveBigEmerald = false;
-
-                        if (is.getAmount() > 1) {
-                            bigEmerald.setAmount((is.getAmount() - 1));
-                            giveBigEmerald = true;
-                        }
-
-                        if (giveBigEmerald) {
-                            player.getInventory().setItem(i, bigEmerald);
+                        //Take away one Reinforced Emerald
+                        if (is.getAmount() == 1) {
+                            player.getInventory().setItem(i,  new ItemStack(Material.AIR));
+                        } else if (is.getAmount() > 1) {
+                            ItemStack remainder = is.clone();
+                            remainder.setAmount(is.getAmount() - 1);
+                            player.getInventory().setItem(i, remainder);
                         }
 
                         return true;
