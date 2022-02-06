@@ -72,7 +72,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             giveBig = true;
                         }
 
-                        //Add Persistence to OffHand item
+                        //Add Persistence to specified item
                         ItemMeta targetItemMeta = targetItem.getItemMeta();
                         String handString;
                         if (mainHand) {
