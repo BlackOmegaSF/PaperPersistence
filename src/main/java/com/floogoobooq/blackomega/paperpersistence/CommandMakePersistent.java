@@ -60,7 +60,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             targetItem = player.getInventory().getItemInOffHand();
                         }
                         if (is.equals(targetItem)) { //Special case for trying to enchant a reinforced emerald
-                            sender.sendMessage("Reinforced Emerald is already persistent.");
+                            sender.sendMessage("[Reinforced Emerald] is already persistent.");
                             return true;
                         }
                         ItemStack bigStack = targetItem.clone();
@@ -98,12 +98,18 @@ public class CommandMakePersistent implements CommandExecutor {
                             if (containsPersistence) {
                                 if (targetItemMeta.hasDisplayName()) {
                                     TextComponent message = Component.text()
+                                            .content("[")
                                         .append(Objects.requireNonNull(targetItemMeta.displayName()))
-                                        .append(Component.text(" is already persistent."))
+                                        .append(Component.text("] is already persistent."))
                                         .build();
                                     sender.sendMessage(message);
                                 } else {
-                                    sender.sendMessage("This item is already persistent.");
+                                    TextComponent message = Component.text()
+                                            .content("[")
+                                            .append(Component.text(targetItem.getType().toString()))
+                                            .append(Component.text("] is already persistent."))
+                                            .build();
+                                    sender.sendMessage(message);
                                 }
                                 return true;
                             }
@@ -124,12 +130,18 @@ public class CommandMakePersistent implements CommandExecutor {
                         }
                         if (updatedTargetMeta.hasDisplayName()) {
                             TextComponent message = Component.text()
+                                    .content("[")
                                     .append(Objects.requireNonNull(updatedTargetMeta.displayName()))
-                                    .append(Component.text(" is now persistent!"))
+                                    .append(Component.text("' is now persistent!"))
                                     .build();
                             sender.sendMessage(message);
                         } else {
-                            sender.sendMessage("The item in your " + handString + " is now persistent!");
+                            TextComponent message = Component.text()
+                                    .content("[")
+                                    .append(Component.text(targetItem.getType().toString()))
+                                    .append(Component.text("] is now persistent!"))
+                                    .build();
+                            sender.sendMessage(message);
                         }
                         if (giveBig) {
                             player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
