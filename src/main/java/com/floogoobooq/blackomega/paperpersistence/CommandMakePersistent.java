@@ -127,7 +127,7 @@ public class CommandMakePersistent implements CommandExecutor {
                         }
 
                         if (giveBigEmerald) {
-                            player.getWorld().dropItemNaturally(player.getLocation(), bigEmerald);
+                            player.getInventory().setItem(i, bigEmerald);
                         }
 
                         return true;
