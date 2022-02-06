@@ -1,6 +1,7 @@
 package com.floogoobooq.blackomega.paperpersistence;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -59,7 +60,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             targetItem = player.getInventory().getItemInOffHand();
                         }
                         if (is.equals(targetItem)) { //Special case for trying to enchant a reinforced emerald
-                            sender.sendMessage("This item is already persistent.");
+                            sender.sendMessage("Reinforced Emerald is already persistent.");
                             return true;
                         }
                         ItemStack bigStack = targetItem.clone();
@@ -96,7 +97,15 @@ public class CommandMakePersistent implements CommandExecutor {
                                 }
                             }
                             if (containsPersistence) {
-                                sender.sendMessage("This item is already persistent.");
+                                if (targetItemMeta.hasDisplayName()) {
+                                    TextComponent message = Component.text()
+                                        .append(Objects.requireNonNull(targetItemMeta.displayName()))
+                                        .append(Component.text(" is already persistent."))
+                                        .build();
+                                    sender.sendMessage(message);
+                                } else {
+                                    sender.sendMessage("This item is already persistent.");
+                                }
                                 return true;
                             }
 
@@ -107,13 +116,22 @@ public class CommandMakePersistent implements CommandExecutor {
                         }
 
                         targetItem.setItemMeta(targetItemMeta);
+                        ItemMeta updatedTargetMeta = targetItem.getItemMeta();
 
                         if (mainHand) {
                             player.getInventory().setItemInMainHand(targetItem);
                         } else {
                             player.getInventory().setItemInOffHand(targetItem);
                         }
-                        sender.sendMessage("Enchanted!");
+                        if (updatedTargetMeta.hasDisplayName()) {
+                            TextComponent message = Component.text()
+                                    .append(Objects.requireNonNull(updatedTargetMeta.displayName()))
+                                    .append(Component.text(" is now persistent!"))
+                                    .build();
+                            sender.sendMessage(message);
+                        } else {
+                            sender.sendMessage("The item in your " + handString + " is now persistent!");
+                        }
                         if (giveBig) {
                             player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
                         }
