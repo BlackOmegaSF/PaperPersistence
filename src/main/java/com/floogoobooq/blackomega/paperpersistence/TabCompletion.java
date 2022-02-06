@@ -23,8 +23,11 @@ public class TabCompletion implements TabCompleter {
                     tabCompleteValues.add(player.getName());
                 }
             } else {
-                for (Player player : commandSender.getServer().matchPlayer(args[0])) {
-                    tabCompleteValues.add(player.getName());
+                for (Player player : commandSender.getServer().getOnlinePlayers()) {
+                    Pattern pattern = Pattern.compile(args[0].toLowerCase());
+                    if (pattern.matcher(player.getName().toLowerCase()).lookingAt()) {
+                        tabCompleteValues.add(player.getName());
+                    }
                 }
             }
 
