@@ -81,7 +81,7 @@ public class CommandMakePersistent implements CommandExecutor {
                             handString = "offhand";
                         }
                         if (targetItemMeta == null) {
-                            sender.sendMessage("Nothing in " + handString + " to enchant");
+                            sender.sendMessage("Nothing in " + handString + "...");
                             return true;
                         }
 
