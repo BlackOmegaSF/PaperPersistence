@@ -5,4 +5,4 @@ api-version: 1.18
 commands:
   makepersistent:
     description: Uses a Reinforced Emerald to make an item Persistent.
-    usage: "Usage: /<command> <player> <>main | offhand>"
+    usage: "Usage: /<command> <player> <main | offhand>"
