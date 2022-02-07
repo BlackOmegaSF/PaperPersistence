@@ -2,6 +2,7 @@ package com.floogoobooq.blackomega.paperpersistence;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public class CommandMakePersistent implements CommandExecutor {
 
@@ -60,7 +62,11 @@ public class CommandMakePersistent implements CommandExecutor {
                             targetItem = player.getInventory().getItemInOffHand();
                         }
                         if (is.equals(targetItem)) { //Special case for trying to enchant a reinforced emerald
-                            sender.sendMessage("[Reinforced Emerald] is already persistent.");
+                            Component message = Component.text()
+                                    .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
+                                    .append(Component.text(" is already persistent."))
+                                    .build();
+                            sender.sendMessage(message);
                             return true;
                         }
                         ItemStack bigStack = targetItem.clone();
@@ -96,21 +102,11 @@ public class CommandMakePersistent implements CommandExecutor {
                                 }
                             }
                             if (containsPersistence) {
-                                if (targetItemMeta.hasDisplayName()) {
-                                    TextComponent message = Component.text()
-                                            .content("[")
-                                        .append(Objects.requireNonNull(targetItemMeta.displayName()))
-                                        .append(Component.text("] is already persistent."))
+                                TextComponent message = Component.text()
+                                        .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
+                                        .append(Component.text(" is already persistent."))
                                         .build();
-                                    sender.sendMessage(message);
-                                } else {
-                                    TextComponent message = Component.text()
-                                            .content("[")
-                                            .append(Component.text(targetItem.getType().toString()))
-                                            .append(Component.text("] is already persistent."))
-                                            .build();
-                                    sender.sendMessage(message);
-                                }
+                                sender.sendMessage(message);
                                 return true;
                             }
 
@@ -121,28 +117,17 @@ public class CommandMakePersistent implements CommandExecutor {
                         }
 
                         targetItem.setItemMeta(targetItemMeta);
-                        ItemMeta updatedTargetMeta = targetItem.getItemMeta();
 
                         if (mainHand) {
                             player.getInventory().setItemInMainHand(targetItem);
                         } else {
                             player.getInventory().setItemInOffHand(targetItem);
                         }
-                        if (updatedTargetMeta.hasDisplayName()) {
-                            TextComponent message = Component.text()
-                                    .content("[")
-                                    .append(Objects.requireNonNull(updatedTargetMeta.displayName()))
-                                    .append(Component.text("' is now persistent!"))
-                                    .build();
-                            sender.sendMessage(message);
-                        } else {
-                            TextComponent message = Component.text()
-                                    .content("[")
-                                    .append(Component.text(targetItem.getType().toString()))
-                                    .append(Component.text("] is now persistent!"))
-                                    .build();
-                            sender.sendMessage(message);
-                        }
+                        TextComponent successMessage = Component.text()
+                                .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
+                                .append(Component.text(" is now persistent!"))
+                                .build();
+                        sender.sendMessage(successMessage);
                         if (giveBig) {
                             player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
                         }
