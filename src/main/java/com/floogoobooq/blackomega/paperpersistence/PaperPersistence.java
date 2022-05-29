@@ -7,11 +7,13 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
@@ -165,11 +167,15 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
     }
 
+
+    /*//Old way of adding persistence to shulker boxes and ender chests (broken)
     @EventHandler
     public void onBlockBreak(final BlockBreakEvent event) {
         Block blockBroken = event.getBlock();
         Material blockType = blockBroken.getType();
-        if(Tag.SHULKER_BOXES.isTagged(blockType) || (blockType == Material.ENDER_CHEST)) {
+
+        if(Tag.SHULKER_BOXES.isTagged(blockType) || (blockType.equals(Material.ENDER_CHEST))) {
+
             Collection<ItemStack> isCollection = blockBroken.getDrops();
             Collection<ItemStack> newCollection = new ArrayList<>();
             for (ItemStack item : isCollection) {
@@ -205,6 +211,57 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                 blockBroken.getWorld().dropItemNaturally(blockBroken.getLocation(), itemStack);
             }
         }
+    }
+     */
+
+    @EventHandler
+    public void onBlockDropItem(final BlockDropItemEvent event) {
+        Material blockType = event.getBlockState().getType(); //Using getBlockState because getBlock will usually be air for this event type
+        //Exit if item isn't shulker box or ender chest
+        if (!Tag.SHULKER_BOXES.isTagged(blockType) && !(blockType.equals(Material.ENDER_CHEST))) {
+            return;
+        }
+
+        //Loop through list of dropping items
+        for (Item item : event.getItems()) {
+            ItemStack itemStack = item.getItemStack();
+
+            //Skip if item isn't shulker box or ender chest
+            if (!Tag.SHULKER_BOXES.isTagged(itemStack.getType()) && !(itemStack.getType().equals(Material.ENDER_CHEST))) {
+                continue;
+            }
+
+            //Add Persistence
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta.hasLore()) {
+                List<Component> lore = itemStack.getItemMeta().lore();
+                assert lore != null;
+                // Check each lore component
+                boolean containsPersistence = false;
+                for (Component component: lore) {
+                    if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
+                        containsPersistence = true;
+                    }
+                }
+                if (!containsPersistence) {
+                    Component persistenceText = Component.text("Persistent");
+                    lore.add(persistenceText);
+                    meta.lore(lore);
+                }
+
+            } else {
+                ArrayList<Component> lore = new ArrayList<>();
+                lore.add(Component.text("Persistent"));
+                meta.lore(lore);
+            }
+
+            itemStack.setItemMeta(meta);
+
+            //Apply new itemstack to the drop list
+            item.setItemStack(itemStack);
+        }
+
+
     }
 
 
