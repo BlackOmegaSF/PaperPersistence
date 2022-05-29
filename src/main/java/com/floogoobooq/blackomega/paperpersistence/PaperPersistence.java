@@ -168,52 +168,6 @@ public class PaperPersistence extends JavaPlugin implements Listener {
     }
 
 
-    /*//Old way of adding persistence to shulker boxes and ender chests (broken)
-    @EventHandler
-    public void onBlockBreak(final BlockBreakEvent event) {
-        Block blockBroken = event.getBlock();
-        Material blockType = blockBroken.getType();
-
-        if(Tag.SHULKER_BOXES.isTagged(blockType) || (blockType.equals(Material.ENDER_CHEST))) {
-
-            Collection<ItemStack> isCollection = blockBroken.getDrops();
-            Collection<ItemStack> newCollection = new ArrayList<>();
-            for (ItemStack item : isCollection) {
-                ItemMeta meta = item.getItemMeta();
-                if (meta.hasLore()) {
-                    List<Component> lore = item.getItemMeta().lore();
-                    assert lore != null;
-                    // Check each lore component
-                    boolean containsPersistence = false;
-                    for (Component component: lore) {
-                        if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
-                            containsPersistence = true;
-                        }
-                    }
-                    if (!containsPersistence) {
-                        Component persistenceText = Component.text("Persistent");
-                        lore.add(persistenceText);
-                        meta.lore(lore);
-                    }
-
-                } else {
-                    ArrayList<Component> lore = new ArrayList<>();
-                    lore.add(Component.text("Persistent"));
-                    meta.lore(lore);
-                }
-
-                item.setItemMeta(meta);
-                newCollection.add(item);
-            }
-
-            blockBroken.setType(Material.AIR);
-            for (ItemStack itemStack : newCollection) {
-                blockBroken.getWorld().dropItemNaturally(blockBroken.getLocation(), itemStack);
-            }
-        }
-    }
-     */
-
     @EventHandler
     public void onBlockDropItem(final BlockDropItemEvent event) {
         Material blockType = event.getBlockState().getType(); //Using getBlockState because getBlock will usually be air for this event type
