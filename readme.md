@@ -14,5 +14,7 @@ How to use:
 When you die, any Persistent item in your inventory (including items inside Shulker boxes) will stay with you when you respawn. Everything else will drop as normal.
 Also note that all Shulker boxes will automatically become Persistent after placing and breaking them.
 
+When properly broken with a Silk Touch pickaxe, Ender Chests will automatically become Persistent.
+
 This plugin supports automatic updates through my custom server launcher: 
 [PaperServerLauncher](https://github.com/BlackOmegaSF/PaperServerLauncher)
