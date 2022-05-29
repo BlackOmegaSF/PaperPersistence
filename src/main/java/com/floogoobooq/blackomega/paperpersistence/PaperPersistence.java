@@ -168,7 +168,8 @@ public class PaperPersistence extends JavaPlugin implements Listener {
     @EventHandler
     public void onBlockBreak(final BlockBreakEvent event) {
         Block blockBroken = event.getBlock();
-        if(Tag.SHULKER_BOXES.isTagged(blockBroken.getType())) {
+        Material blockType = blockBroken.getType();
+        if(Tag.SHULKER_BOXES.isTagged(blockType) || (blockType == Material.ENDER_CHEST)) {
             Collection<ItemStack> isCollection = blockBroken.getDrops();
             Collection<ItemStack> newCollection = new ArrayList<>();
             for (ItemStack item : isCollection) {
