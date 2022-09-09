@@ -102,10 +102,8 @@ public class PaperPersistence extends JavaPlugin implements Listener {
             ItemStack is = inventory[i];
             if(is != null) {
 
-                if(is.getItemMeta() instanceof BlockStateMeta) { //Special case for shulker boxes
-                    BlockStateMeta im = (BlockStateMeta)is.getItemMeta();
-                    if(im.getBlockState() instanceof ShulkerBox) {
-                        ShulkerBox shulker = (ShulkerBox) im.getBlockState();
+                if(is.getItemMeta() instanceof BlockStateMeta im) { //Special case for shulker boxes
+                    if(im.getBlockState() instanceof ShulkerBox shulker) {
 
                         for (ItemStack s : shulker.getInventory().getContents()) {
                             if(s != null ) {
