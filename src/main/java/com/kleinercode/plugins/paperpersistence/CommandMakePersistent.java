@@ -50,7 +50,7 @@ public class CommandMakePersistent implements CommandExecutor {
             ItemStack is = inventory[i];
             if (is != null) { // Skip if null to avoid NullPointerException
                 if (is.getType() ==  Material.EMERALD && is.getItemMeta().hasDisplayName() && is.getItemMeta().hasLore()) {
-                    String itemLore = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().lore()).get(0));
+                    String itemLore = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().lore()).getFirst());
                     String itemDisplayName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().displayName()));
                     if (itemLore.equals("Persistent") && itemDisplayName.equals("Reinforced Emerald")) {
 
