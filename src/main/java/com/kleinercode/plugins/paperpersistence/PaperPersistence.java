@@ -89,7 +89,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-
+        // TODO Figure out if we need to do anything here
     }
 
     @EventHandler(priority = EventPriority.HIGH)
