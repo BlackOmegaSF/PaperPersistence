@@ -40,12 +40,12 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                 }
             }
 
-            if (keepInventoryWorlds.size() == 0) {
+            if (keepInventoryWorlds.isEmpty()) {
                 getLogger().log(Level.INFO, "KeepInventory is disabled, Persistence will work correctly.");
             } else if (keepInventoryWorlds.size() == 1) {
                 final TextComponent message = Component.text("KeepInventory is enabled in world \"")
                         .color(NamedTextColor.YELLOW)
-                        .append(Component.text(keepInventoryWorlds.get(0), NamedTextColor.BLUE))
+                        .append(Component.text(keepInventoryWorlds.getFirst(), NamedTextColor.BLUE))
                         .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
                 getServer().broadcast(message, "OP");
                 getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(message));
