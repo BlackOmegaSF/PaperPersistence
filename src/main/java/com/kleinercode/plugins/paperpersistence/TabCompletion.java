@@ -1,4 +1,4 @@
-package com.floogoobooq.blackomega.paperpersistence;
+package com.kleinercode.plugins.paperpersistence;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

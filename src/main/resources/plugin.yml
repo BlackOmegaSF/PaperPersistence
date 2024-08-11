@@ -1,6 +1,6 @@
 name: PaperPersistence
 version: 3.0.0
-main: com.floogoobooq.blackomega.paperpersistence.PaperPersistence
+main: com.kleinercode.plugins.paperpersistence.PaperPersistence
 api-version: 1.19
 commands:
   makepersistent:

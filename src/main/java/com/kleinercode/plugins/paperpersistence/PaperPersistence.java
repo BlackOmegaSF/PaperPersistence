@@ -1,4 +1,4 @@
-package com.floogoobooq.blackomega.paperpersistence;
+package com.kleinercode.plugins.paperpersistence;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
