@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class PaperPersistence extends JavaPlugin implements Listener {
@@ -81,8 +82,8 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         getServer().addRecipe(reRecipe);
 
         // Register the command
-        this.getCommand("makepersistent").setExecutor(new CommandMakePersistent());
-        this.getCommand("makepersistent").setTabCompleter(new TabCompletion());
+        Objects.requireNonNull(this.getCommand("makepersistent")).setExecutor(new CommandMakePersistent());
+        Objects.requireNonNull(this.getCommand("makepersistent")).setTabCompleter(new TabCompletion());
 
     }
 
