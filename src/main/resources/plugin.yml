@@ -1,8 +1,4 @@
 name: PaperPersistence
-version: 3.1.0
+version: 3.2.0
 main: com.kleinercode.plugins.paperpersistence.PaperPersistence
 api-version: 1.21
-commands:
-  makepersistent:
-    description: Uses a Reinforced Emerald to make an item Persistent.
-    usage: "Usage: /<command> <player> <main | offhand>"

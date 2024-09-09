@@ -82,10 +82,6 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
         getServer().addRecipe(reRecipe);
 
-        // Register the command
-        Objects.requireNonNull(this.getCommand("makepersistent")).setExecutor(new CommandMakePersistent());
-        Objects.requireNonNull(this.getCommand("makepersistent")).setTabCompleter(new TabCompletion());
-
     }
 
     @Override
