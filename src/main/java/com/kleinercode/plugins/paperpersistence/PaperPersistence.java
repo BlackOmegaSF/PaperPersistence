@@ -213,27 +213,33 @@ public class PaperPersistence extends JavaPlugin implements Listener {
             if (checkIfPersistent(inventory.getFirstItem())) {
                 // First item is persistent, set result to null
                 event.setResult(null);
-            } else {
-                // First item is ready for Persistence, so add it
-                ItemMeta meta = firstItemStack.getItemMeta();
-                ArrayList<Component> lore;
-                if (meta.hasLore()) {
-                    lore = (ArrayList<Component>) meta.lore();
-                } else {
-                    lore = new ArrayList<>();
-                }
-                assert lore != null;
-                lore.add(Component.text("Persistent"));
-                meta.lore(lore);
-                ItemStack resultStack = firstItemStack.clone();
-                resultStack.setItemMeta(meta);
-                event.setResult(resultStack);
-
-                // Need to define repair cost to make recipe work
-                AnvilView view = event.getView();
-                view.setRepairCost(1);
-                view.setRepairItemCountCost(firstItemStack.getAmount());
+                return;
             }
+            assert secondItemStack != null;
+            if (secondItemStack.getAmount() < firstItemStack.getAmount()) {
+                // Not enough in cost
+                event.setResult(null);
+                return;
+            }
+            // First item is ready for Persistence, so add it
+            ItemMeta meta = firstItemStack.getItemMeta();
+            ArrayList<Component> lore;
+            if (meta.hasLore()) {
+                lore = (ArrayList<Component>) meta.lore();
+            } else {
+                lore = new ArrayList<>();
+            }
+            assert lore != null;
+            lore.add(Component.text("Persistent"));
+            meta.lore(lore);
+            ItemStack resultStack = firstItemStack.clone();
+            resultStack.setItemMeta(meta);
+            event.setResult(resultStack);
+
+            // Need to define repair cost to make recipe work
+            AnvilView view = event.getView();
+            view.setRepairCost(1);
+            view.setRepairItemCountCost(firstItemStack.getAmount());
         }
 
     }
