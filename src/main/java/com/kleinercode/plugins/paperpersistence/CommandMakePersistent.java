@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class CommandMakePersistent implements CommandExecutor {
 
@@ -46,104 +45,83 @@ public class CommandMakePersistent implements CommandExecutor {
 
         for (int i = 0; i < inventory.length; i++) {
             ItemStack is = inventory[i];
-            if (is != null) { // Skip if null to avoid NullPointerException
-                if (is.getType() ==  Material.EMERALD && is.getItemMeta().hasDisplayName() && is.getItemMeta().hasLore()) {
-                    String itemLore = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().lore()).getFirst());
-                    String itemDisplayName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(is.getItemMeta().displayName()));
-                    if (itemLore.equals("Persistent") && itemDisplayName.equals("Reinforced Emerald")) {
-
-                        //Grab data of target item
-                        ItemStack targetItem;
-                        if (mainHand) {
-                            targetItem = player.getInventory().getItemInMainHand();
-                        } else {
-                            targetItem = player.getInventory().getItemInOffHand();
-                        }
-                        if (is.equals(targetItem)) { //Special case for trying to enchant a reinforced emerald
-                            Component message = Component.text()
-                                    .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
-                                    .append(Component.text(" is already persistent."))
-                                    .build();
-                            sender.sendMessage(message);
-                            return true;
-                        }
-                        ItemStack bigStack = targetItem.clone();
-                        boolean giveBig = false;
-
-                        if (targetItem.getAmount() > 1) {
-                            bigStack.setAmount((targetItem.getAmount() - 1));
-                            targetItem.setAmount(1);
-                            giveBig = true;
-                        }
-
-                        //Add Persistence to specified item
-                        ItemMeta targetItemMeta = targetItem.getItemMeta();
-                        String handString;
-                        if (mainHand) {
-                            handString = "main hand";
-                        } else {
-                            handString = "offhand";
-                        }
-                        if (targetItemMeta == null) {
-                            sender.sendMessage("Nothing in " + handString + "...");
-                            return true;
-                        }
-
-                        if (targetItemMeta.hasLore()) {
-                            List<Component> lore = targetItemMeta.lore();
-                            // Check each lore component
-                            boolean containsPersistence = false;
-                            assert lore != null;
-                            for (Component component: lore) {
-                                if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
-                                    containsPersistence = true;
-                                }
-                            }
-                            if (containsPersistence) {
-                                TextComponent message = Component.text()
-                                        .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
-                                        .append(Component.text(" is already persistent."))
-                                        .build();
-                                sender.sendMessage(message);
-                                return true;
-                            }
-
-                        } else {
-                            ArrayList<Component> lore = new ArrayList<>();
-                            lore.add(Component.text("Persistent"));
-                            targetItemMeta.lore(lore);
-                        }
-
-                        targetItem.setItemMeta(targetItemMeta);
-
-                        if (mainHand) {
-                            player.getInventory().setItemInMainHand(targetItem);
-                        } else {
-                            player.getInventory().setItemInOffHand(targetItem);
-                        }
-                        TextComponent successMessage = Component.text()
-                                .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
-                                .append(Component.text(" is now persistent!"))
-                                .build();
-                        sender.sendMessage(successMessage);
-                        if (giveBig) {
-                            player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
-                        }
-                        //Take away one Reinforced Emerald
-                        if (is.getAmount() == 1) {
-                            player.getInventory().setItem(i,  new ItemStack(Material.AIR));
-                        } else if (is.getAmount() > 1) {
-                            ItemStack remainder = is.clone();
-                            remainder.setAmount(is.getAmount() - 1);
-                            player.getInventory().setItem(i, remainder);
-                        }
-
-                        return true;
-
-
-                    }
-
+            if (Utils.checkIfReinforcedEmerald(is)) {
+                //Grab data of target item
+                ItemStack targetItem;
+                if (mainHand) {
+                    targetItem = player.getInventory().getItemInMainHand();
+                } else {
+                    targetItem = player.getInventory().getItemInOffHand();
                 }
+                if (is.equals(targetItem)) { //Special case for trying to enchant a reinforced emerald
+                    Component message = Component.text()
+                            .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
+                            .append(Component.text(" is already persistent."))
+                            .build();
+                    sender.sendMessage(message);
+                    return true;
+                }
+                ItemStack bigStack = targetItem.clone();
+                boolean giveBig = false;
+
+                if (targetItem.getAmount() > 1) {
+                    bigStack.setAmount((targetItem.getAmount() - 1));
+                    targetItem.setAmount(1);
+                    giveBig = true;
+                }
+
+                //Add Persistence to specified item
+                ItemMeta targetItemMeta = targetItem.getItemMeta();
+                String handString;
+                if (mainHand) {
+                    handString = "main hand";
+                } else {
+                    handString = "offhand";
+                }
+                if (targetItemMeta == null) {
+                    sender.sendMessage("Nothing in " + handString + "...");
+                    return true;
+                }
+
+                if (Utils.checkIfPersistent(targetItem)) {
+                    // Target item is already persistent
+                    TextComponent message = Component.text()
+                            .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
+                            .append(Component.text(" is already persistent."))
+                            .build();
+                    sender.sendMessage(message);
+                    return true;
+                }
+
+                ArrayList<Component> lore = new ArrayList<>();
+                lore.add(Component.text("Persistent"));
+                targetItemMeta.lore(lore);
+
+                targetItem.setItemMeta(targetItemMeta);
+
+                if (mainHand) {
+                    player.getInventory().setItemInMainHand(targetItem);
+                } else {
+                    player.getInventory().setItemInOffHand(targetItem);
+                }
+                TextComponent successMessage = Component.text()
+                        .append(targetItem.displayName().hoverEvent(targetItem.asHoverEvent()))
+                        .append(Component.text(" is now persistent!"))
+                        .build();
+                sender.sendMessage(successMessage);
+                if (giveBig) {
+                    player.getWorld().dropItemNaturally(player.getLocation(), bigStack);
+                }
+                //Take away one Reinforced Emerald
+                if (is.getAmount() == 1) {
+                    player.getInventory().setItem(i,  new ItemStack(Material.AIR));
+                } else if (is.getAmount() > 1) {
+                    ItemStack remainder = is.clone();
+                    remainder.setAmount(is.getAmount() - 1);
+                    player.getInventory().setItem(i, remainder);
+                }
+
+                return true;
             }
         }
 
