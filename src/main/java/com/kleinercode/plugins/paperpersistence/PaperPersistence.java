@@ -1,11 +1,13 @@
 package com.kleinercode.plugins.paperpersistence;
 
+import io.papermc.paper.event.world.WorldGameRuleChangeEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,15 +25,14 @@ import org.bukkit.inventory.view.AnvilView;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.units.qual.A;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.kleinercode.plugins.paperpersistence.Utils.*;
 
 public class PaperPersistence extends JavaPlugin implements Listener {
+
+    ArrayList<UUID> keepInventoryWorlds = new ArrayList<UUID>();
 
 
     public void onEnable() {
@@ -40,34 +41,26 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
         // Check if KeepInventory is enabled, recommend disabling it
         getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
-            List<String> keepInventoryWorlds = new ArrayList<>();
             for (World world : getServer().getWorlds()) {
                 Boolean keepInventoryEnabled = world.getGameRuleValue(GameRule.KEEP_INVENTORY);
                 if (keepInventoryEnabled != null && keepInventoryEnabled) {
-                    keepInventoryWorlds.add(world.getName());
+                    keepInventoryWorlds.add(world.getUID());
                 }
             }
 
             if (keepInventoryWorlds.isEmpty()) {
                 getLogger().log(Level.INFO, "KeepInventory is disabled, Persistence will work correctly.");
-            } else if (keepInventoryWorlds.size() == 1) {
-                final TextComponent message = Component.text("KeepInventory is enabled in world \"")
-                        .color(NamedTextColor.YELLOW)
-                        .append(Component.text(keepInventoryWorlds.getFirst(), NamedTextColor.BLUE))
-                        .append(Component.text("\". For the Persistence plugin to work properly, this should be disabled."));
-                getServer().broadcast(message, "OP");
-                getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(message));
             } else {
-                final TextComponent message = Component.text("KeepInventory is enabled in multiple worlds. For the Persistence plugin to work properly, this should be disabled. See the server console for a list of worlds with KeepInventory enabled.")
-                        .color(NamedTextColor.YELLOW);
-                getServer().broadcast(message, "OP");
-                StringBuilder listString = new StringBuilder();
-                for (String world : keepInventoryWorlds) {
-                    listString.append(world);
-                    listString.append("; ");
+                for (UUID worldId : keepInventoryWorlds) {
+                    World world = getServer().getWorld(worldId);
+                    if (world == null) continue;
+                    world.setGameRule(GameRule.KEEP_INVENTORY, false);
+                    final TextComponent logMessage = Component.text("KeepInventory has been disabled in world\"", NamedTextColor.YELLOW)
+                            .append(Component.text(world.getName(), NamedTextColor.BLUE))
+                            .append(Component.text("\"", NamedTextColor.YELLOW));
+                    getServer().broadcast(logMessage, "OP");
+                    getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(logMessage));
                 }
-                getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(message));
-                getLogger().log(Level.INFO, listString.toString());
             }
         });
 
@@ -86,7 +79,29 @@ public class PaperPersistence extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        // TODO Figure out if we need to do anything here
+        // Re-enable keepInventory on disabled worlds
+        for (UUID worldId : keepInventoryWorlds) {
+            World world = getServer().getWorld(worldId);
+            if (world == null) continue;
+            world.setGameRule(GameRule.KEEP_INVENTORY, true);
+            final TextComponent logMessage = Component.text("KeepInventory has been re-enabled in world\"", NamedTextColor.YELLOW)
+                    .append(Component.text(world.getName(), NamedTextColor.BLUE))
+                    .append(Component.text("\"", NamedTextColor.YELLOW));
+            getServer().broadcast(logMessage, "OP");
+            getLogger().log(Level.WARNING, PlainTextComponentSerializer.plainText().serialize(logMessage));
+        }
+
+    }
+
+    @EventHandler
+    public void worldGameRuleChangeEvent(final WorldGameRuleChangeEvent event) {
+        if (event.getGameRule() != GameRule.KEEP_INVENTORY) return;
+        if (!event.getValue().equalsIgnoreCase("TRUE")) return;
+        CommandSender sender = event.getCommandSender();
+        if (sender == null) return;
+        final TextComponent errorMessage = Component.text("Error: You cannot enable keepInventory while the Persistence plugin is enabled.", NamedTextColor.RED);
+        sender.sendMessage(errorMessage);
+        event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
