@@ -13,16 +13,23 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.view.AnvilView;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
+
+import static com.kleinercode.plugins.paperpersistence.Utils.*;
 
 public class PaperPersistence extends JavaPlugin implements Listener {
 
@@ -65,13 +72,7 @@ public class PaperPersistence extends JavaPlugin implements Listener {
         });
 
         // Create the Reinforced Emerald
-        ItemStack reinforcedEmerald = new ItemStack(Material.EMERALD);
-        ItemMeta reMeta = reinforcedEmerald.getItemMeta();
-        reMeta.displayName(Component.text("Reinforced Emerald"));
-        List<Component> lore = new ArrayList<>();
-        lore.add(Component.text("Persistent"));
-        reMeta.lore(lore);
-        reinforcedEmerald.setItemMeta(reMeta);
+        ItemStack reinforcedEmerald = getReinforcedEmerald();
 
         // Set up shapeless crafting recipe for Reinforced Emerald
         NamespacedKey recipeKey = new NamespacedKey(this, "reRecipe");
@@ -181,38 +182,59 @@ public class PaperPersistence extends JavaPlugin implements Listener {
                 continue;
             }
 
-            //Add Persistence
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta.hasLore()) {
-                List<Component> lore = itemStack.getItemMeta().lore();
+            //Add Persistence if item isn't already
+            if (!Utils.checkIfPersistent(itemStack)) {
+                ItemMeta meta = itemStack.getItemMeta();
+                ArrayList<Component> lore;
+                if (meta.hasLore()) {
+                    lore = (ArrayList<Component>) meta.lore();
+                } else {
+                    lore = new ArrayList<>();
+                }
                 assert lore != null;
-                // Check each lore component
-                boolean containsPersistence = false;
-                for (Component component: lore) {
-                    if (PlainTextComponentSerializer.plainText().serialize(component).equals("Persistent")) {
-                        containsPersistence = true;
-                    }
-                }
-                if (!containsPersistence) {
-                    Component persistenceText = Component.text("Persistent");
-                    lore.add(persistenceText);
-                    meta.lore(lore);
-                }
-
-            } else {
-                ArrayList<Component> lore = new ArrayList<>();
                 lore.add(Component.text("Persistent"));
                 meta.lore(lore);
+                itemStack.setItemMeta(meta);
+                item.setItemStack(itemStack);
             }
-
-            itemStack.setItemMeta(meta);
-
-            //Apply new itemstack to the drop list
-            item.setItemStack(itemStack);
         }
-
-
     }
 
+    @EventHandler
+    public void prepareAnvilEvent(final PrepareAnvilEvent event) {
 
+        AnvilInventory inventory = event.getInventory();
+        ItemStack firstItemStack = inventory.getFirstItem();
+        if (firstItemStack == null) return; // Not handling null event
+        //if (firstItemStack.getAmount() > 1) return; // Not handling events with multiple input
+        ItemStack secondItemStack = inventory.getSecondItem();
+        if (checkIfReinforcedEmerald(secondItemStack)) {
+            // Second item is a reinforced emerald, check if first is persistent
+            if (checkIfPersistent(inventory.getFirstItem())) {
+                // First item is persistent, set result to null
+                event.setResult(null);
+            } else {
+                // First item is ready for Persistence, so add it
+                ItemMeta meta = firstItemStack.getItemMeta();
+                ArrayList<Component> lore;
+                if (meta.hasLore()) {
+                    lore = (ArrayList<Component>) meta.lore();
+                } else {
+                    lore = new ArrayList<>();
+                }
+                assert lore != null;
+                lore.add(Component.text("Persistent"));
+                meta.lore(lore);
+                ItemStack resultStack = firstItemStack.clone();
+                resultStack.setItemMeta(meta);
+                event.setResult(resultStack);
+
+                // Need to define repair cost to make recipe work
+                AnvilView view = event.getView();
+                view.setRepairCost(1);
+                view.setRepairItemCountCost(firstItemStack.getAmount());
+            }
+        }
+
+    }
 }
